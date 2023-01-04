@@ -72,6 +72,7 @@ spec:
             - containerPort: 8445
             - containerPort: 8446
             - containerPort: 60100
+            - containerPort: 9094
           env:
             - name: NOOBAA_DISABLE_COMPRESSION
               valueFrom:
@@ -138,3 +139,8 @@ spec:
               valueFrom:
                 resourceFieldRef:
                   resource: limits.memory
+            - name: CONTAINER_IO_LIMIT
+              valueFrom:
+                configMapKeyRef:
+                  name: noobaa-config
+                  key: CONTAINER_IO_LIMIT

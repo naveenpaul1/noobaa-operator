@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/noobaa/noobaa-operator/v5/pkg/admission"
+	"github.com/noobaa/noobaa-operator/v5/pkg/grpc"
 	"github.com/noobaa/noobaa-operator/v5/pkg/options"
 	"github.com/noobaa/noobaa-operator/v5/pkg/system"
 	"github.com/noobaa/noobaa-operator/v5/pkg/version"
@@ -34,7 +35,7 @@ var (
 
 // RunOperator is the main function of the operator but it is called from a cobra.Command
 func RunOperator(cmd *cobra.Command, args []string) {
-	if (options.DebugLevel == "warn") {
+	if options.DebugLevel == "warn" {
 		util.InitLogger(logrus.WarnLevel)
 	} else {
 		util.InitLogger(logrus.DebugLevel)
@@ -89,9 +90,11 @@ func RunOperator(cmd *cobra.Command, args []string) {
 			admission.RunAdmissionServer()
 		}()
 	}
-
+	go func() {
+		grpc.Startgrpc()
+	}()
 	// Start the manager
-	log.Info("Starting the Operator ...")
+	log.Info("Starting the Operator ...111")
 	if err := mgr.Start(signals.SetupSignalHandler()); err != nil {
 		log.Fatalf("Manager exited non-zero: %s", err)
 	}

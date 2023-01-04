@@ -3803,7 +3803,7 @@ spec:
       name: mongodb
 `
 
-const Sha256_deploy_internal_service_mgmt_yaml = "fa5f052fb360e6893fc446a318413a6f494a8610706ae7e36ff985b3b3a5c070"
+const Sha256_deploy_internal_service_mgmt_yaml = "5499b1e855207d29f879cd47a38eda920ae9690d0a2fd5da97a72a9a8c9d7ec1"
 
 const File_deploy_internal_service_mgmt_yaml = `apiVersion: v1
 kind: Service
@@ -3833,6 +3833,8 @@ spec:
       name: bg-https
     - port: 8446
       name: hosted-agents-https
+    - name: grpc-http
+      port: 9094
 `
 
 const Sha256_deploy_internal_service_s3_yaml = "df7d8c8ee81b820678b7d8648b26c6cf86da6be00caedad052c3848db5480c37"
@@ -3939,7 +3941,7 @@ spec:
       noobaa-s3-svc: "true"
 `
 
-const Sha256_deploy_internal_statefulset_core_yaml = "3b0aec2d946e02a9d8b44b8f191c335be33a75c8c2d2dc2f04c64cf37ecbfa3f"
+const Sha256_deploy_internal_statefulset_core_yaml = "6044915a75f9976a132c01456f34d26535a2fd9bf651ff6703d5b6588bbaebef"
 
 const File_deploy_internal_statefulset_core_yaml = `apiVersion: apps/v1
 kind: StatefulSet
@@ -4015,6 +4017,7 @@ spec:
             - containerPort: 8445
             - containerPort: 8446
             - containerPort: 60100
+            - containerPort: 9094
           env:
             - name: NOOBAA_DISABLE_COMPRESSION
               valueFrom:
@@ -4081,6 +4084,11 @@ spec:
               valueFrom:
                 resourceFieldRef:
                   resource: limits.memory
+            - name: CONTAINER_IO_LIMIT
+              valueFrom:
+                configMapKeyRef:
+                  name: noobaa-config
+                  key: CONTAINER_IO_LIMIT
 `
 
 const Sha256_deploy_internal_statefulset_db_yaml = "b6039d7ba3604deb54fdf6c48a7df758e1768e1af294ea21d0988cf30103c1c4"
@@ -5058,7 +5066,7 @@ spec:
   sourceNamespace: default
 `
 
-const Sha256_deploy_operator_yaml = "2870838f688bf1691d85c64dc5e302eb6575996427c7cfdb7143f322ff0dbd18"
+const Sha256_deploy_operator_yaml = "198c99ec172d798acddaca8dcb62aa3ade9f4b317746a01c0a4169392cc34cd3"
 
 const File_deploy_operator_yaml = `apiVersion: apps/v1
 kind: Deployment
@@ -5074,6 +5082,7 @@ spec:
       labels:
         app: noobaa
         noobaa-operator: deployment
+        noobaa-mgmt: noobaa
     spec:
       serviceAccountName: noobaa
       volumes:

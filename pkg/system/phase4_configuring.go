@@ -420,7 +420,7 @@ func (r *Reconciler) setDesiredEndpointMounts(podSpec *corev1.PodSpec, container
 	container.VolumeMounts = r.DefaultDeploymentEndpoint.Containers[0].VolumeMounts
 
 	if util.KubeCheckQuiet(r.CaBundleConf) {
-		configMapVolumes := []corev1.Volume {{
+		configMapVolumes := []corev1.Volume{{
 			Name: r.CaBundleConf.Name,
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
@@ -435,10 +435,10 @@ func (r *Reconciler) setDesiredEndpointMounts(podSpec *corev1.PodSpec, container
 			},
 		}}
 		util.MergeVolumeList(&podSpec.Volumes, &configMapVolumes)
-		configMapVolumeMounts := []corev1.VolumeMount {{
+		configMapVolumeMounts := []corev1.VolumeMount{{
 			Name:      r.CaBundleConf.Name,
 			MountPath: "/etc/pki/ca-trust/extracted/pem",
-			ReadOnly: true,
+			ReadOnly:  true,
 		}}
 		util.MergeVolumeMountList(&container.VolumeMounts, &configMapVolumeMounts)
 	}
@@ -556,7 +556,7 @@ func (r *Reconciler) awaitEndpointDeploymentPods() error {
 func (r *Reconciler) ReconcileHPAEndpoint() error {
 	// Wait for the the endpoint deployment to become ready
 	// only if HPA was not created yet
-	if r.HPAEndpoint.UID == "" {
+	/*if r.HPAEndpoint.UID == "" {
 		if err := r.awaitEndpointDeploymentPods(); err != nil {
 			return err
 		}
@@ -585,7 +585,8 @@ func (r *Reconciler) ReconcileHPAEndpoint() error {
 			Min: min,
 			Max: max,
 		},
-	})
+	})*/
+	return nil
 }
 
 // SetDesiredHPAEndpoint updates the endpoint horizontal pod autoscaler as desired for reconciling

@@ -50,7 +50,11 @@ require (
 	sigs.k8s.io/yaml v1.2.0
 )
 
-require github.com/gemalto/kmip-go v0.0.8-0.20220721195433-3fe83e2d3f26
+require (
+	github.com/gemalto/kmip-go v0.0.8-0.20220721195433-3fe83e2d3f26
+	github.com/golang/protobuf v1.5.2
+	google.golang.org/grpc v1.44.0
+)
 
 require (
 	cloud.google.com/go v0.65.0 // indirect
@@ -84,7 +88,6 @@ require (
 	github.com/go-openapi/swag v0.19.14 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
@@ -148,7 +151,6 @@ require (
 	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220208230804-65c12eb4c068 // indirect
-	google.golang.org/grpc v1.44.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.5.1 // indirect

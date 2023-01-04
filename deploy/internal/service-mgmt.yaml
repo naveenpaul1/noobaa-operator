@@ -26,3 +26,5 @@ spec:
       name: bg-https
     - port: 8446
       name: hosted-agents-https
+    - name: grpc-http
+      port: 9094

@@ -145,7 +145,7 @@ func waitForOperatorPodExit() {
 		// List failure
 		if !listRes {
 			log.Printf("❌ Can not list pods in %v namespace with noobaa-operator=deployment label, try again.", options.Namespace)
-		// Exit condition, list succeded and no operator's pods are found
+			// Exit condition, list succeded and no operator's pods are found
 		} else if len(podsList.Items) == 0 {
 			log.Printf("✅ NooBaa operator pod is not running, continue.")
 			break
@@ -241,18 +241,18 @@ func RunYaml(cmd *cobra.Command, args []string) {
 
 // Conf struct holds all the objects needed to install the operator
 type Conf struct {
-	NS                         *corev1.Namespace
-	SA                         *corev1.ServiceAccount
-	SAUI                       *corev1.ServiceAccount
-	Role                       *rbacv1.Role
-	RoleUI                     *rbacv1.Role
-	RoleBinding                *rbacv1.RoleBinding
-	ClusterRole                *rbacv1.ClusterRole
-	ClusterRoleBinding         *rbacv1.ClusterRoleBinding
-	Deployment                 *appsv1.Deployment
-	WebhookConfiguration       *admissionv1.ValidatingWebhookConfiguration
-	WebhookSecret              *corev1.Secret
-	WebhookService             *corev1.Service
+	NS                   *corev1.Namespace
+	SA                   *corev1.ServiceAccount
+	SAUI                 *corev1.ServiceAccount
+	Role                 *rbacv1.Role
+	RoleUI               *rbacv1.Role
+	RoleBinding          *rbacv1.RoleBinding
+	ClusterRole          *rbacv1.ClusterRole
+	ClusterRoleBinding   *rbacv1.ClusterRoleBinding
+	Deployment           *appsv1.Deployment
+	WebhookConfiguration *admissionv1.ValidatingWebhookConfiguration
+	WebhookSecret        *corev1.Secret
+	WebhookService       *corev1.Service
 }
 
 // LoadOperatorConf loads and initializes all the objects needed to install the operator

@@ -12,6 +12,7 @@ spec:
       labels:
         app: noobaa
         noobaa-operator: deployment
+        noobaa-mgmt: noobaa
     spec:
       serviceAccountName: noobaa
       volumes:
