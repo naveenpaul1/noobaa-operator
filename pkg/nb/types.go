@@ -28,6 +28,7 @@ type SystemInfo struct {
 	Pools              []PoolInfo              `json:"pools"`
 	Tiers              []TierInfo              `json:"tiers"`
 	Version            string                  `json:"version"`
+	SystemId           string                  `json:"system_id"`
 	NamespaceResources []NamespaceResourceInfo `json:"namespace_resources"`
 	// TODO SystemInfo struct is partial ...
 }
@@ -286,7 +287,7 @@ type ListAccountsReply struct {
 // ListBcuketsParams is the params to account_api.list_buckets()
 type ListBucketsParams struct {
 	ContinuationToken *string `json:"continuation_token,omitempty"`
-	MaxBuckets *int `json:"max_buckets,omitempty"`
+	MaxBuckets        *int    `json:"max_buckets,omitempty"`
 }
 
 // ListBucketsReply is the reply of bucket_api.list_buckets()
@@ -585,15 +586,15 @@ type DeleteNamespaceResourceParams struct {
 
 // UpdateAccountParams is the params of account_api.update_account_s3_access()
 type UpdateAccountParams struct {
-	Name                *string                  `json:"username,omitempty"`
-	Email               string                   `json:"email"`
-	NewEmail            *string                  `json:"new_email,omitempty"`
-	AllowedIPs          *[]struct {
-		Start   string `json:"start"`
-		End     string `json:"end"`
+	Name       *string `json:"username,omitempty"`
+	Email      string  `json:"email"`
+	NewEmail   *string `json:"new_email,omitempty"`
+	AllowedIPs *[]struct {
+		Start string `json:"start"`
+		End   string `json:"end"`
 	} `json:"ips,omitempty"`
-	RoleConfig          interface{}              `json:"role_config,omitempty"`
-	RemoveRoleConfig    bool                     `json:"remove_role_config,omitempty"`
+	RoleConfig       interface{} `json:"role_config,omitempty"`
+	RemoveRoleConfig bool        `json:"remove_role_config,omitempty"`
 }
 
 // UpdateAccountS3AccessParams is the params of account_api.update_account_s3_access()
@@ -609,6 +610,11 @@ type UpdateAccountS3AccessParams struct {
 // UpdateDefaultResourceParams is the params of bucket_api.update_all_buckets_default_pool()
 type UpdateDefaultResourceParams struct {
 	PoolName string `json:"pool_name"`
+}
+
+// CreateMissingDefaultPoolParams is the params of bucket_api.update_all_buckets_default_pool()
+type CreateMissingDefaultPoolParams struct {
+	Email string `json:"email"`
 }
 
 // UpdateBucketClassParams is the params of tiering_policy_api.update_bucket_class()

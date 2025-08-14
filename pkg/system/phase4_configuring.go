@@ -105,6 +105,9 @@ func (r *Reconciler) ReconcilePhaseConfiguring() error {
 	if err := r.ReconcileDeploymentEndpointStatus(); err != nil {
 		return err
 	}
+	if err := r.ReconcileMissingDefaultPool(); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -1982,6 +1985,33 @@ func (r *Reconciler) ReconcileNamespaceStores(namespaceResources []nb.NamespaceR
 			if err != nil {
 				logrus.Infof("couldn't update namespace store info for namespace resource %q in namespace %q", nsr.Name, options.Namespace)
 			}
+		}
+	}
+	return nil
+}
+
+func (r *Reconciler) ReconcileMissingDefaultPool() error {
+	systemInfo, err := r.NBClient.ReadSystemAPI()
+	if err != nil {
+		r.Logger.Errorf("failed to read system info: %v", err)
+		return err
+	}
+	r.SystemInfo = &systemInfo
+	defaultPoolsExist := false
+	for i := range r.SystemInfo.Pools {
+		pool := &r.SystemInfo.Pools[i]
+		//fmt.Println("POOL ReconcileMissingDefaultPool ===>>>", pool.Name)
+		if pool.Name == "backingstores-"+r.SystemInfo.SystemId {
+			defaultPoolsExist = true
+		}
+	}
+	//fmt.Println("CreateMissingDefaultPool ======>>> ", defaultPoolsExist)
+	if !defaultPoolsExist {
+		err := r.NBClient.CreateMissingDefaultPool(nb.CreateMissingDefaultPoolParams{
+			Email: "admin@noobaa.io",
+		})
+		if err != nil {
+			return err
 		}
 	}
 	return nil
