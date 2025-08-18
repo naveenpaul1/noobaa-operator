@@ -612,10 +612,6 @@ type UpdateDefaultResourceParams struct {
 	PoolName string `json:"pool_name"`
 }
 
-// CreateMissingDefaultPoolParams is the params of bucket_api.update_all_buckets_default_pool()
-type CreateMissingDefaultPoolParams struct {
-	Email string `json:"email"`
-}
 
 // UpdateBucketClassParams is the params of tiering_policy_api.update_bucket_class()
 type UpdateBucketClassParams struct {

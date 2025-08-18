@@ -27,7 +27,6 @@ type Client interface {
 	CreateAccountAPI(CreateAccountParams) (CreateAccountReply, error)
 	CreateBucketAPI(CreateBucketParams) error
 	UpdateBucketAPI(CreateBucketParams) error
-	CreateMissingDefaultPool(CreateMissingDefaultPoolParams) error
 
 	CreateHostsPoolAPI(CreateHostsPoolParams) (string, error)
 	GetHostsPoolAgentConfigAPI(GetHostsPoolAgentConfigParams) (string, error)
@@ -291,12 +290,6 @@ func (c *RPCClient) SetNamespaceStoreInfo(info NamespaceStoreInfo) error {
 func (c *RPCClient) DeleteNamespaceResourceAPI(params DeleteNamespaceResourceParams) error {
 	req := &RPCMessage{API: "pool_api", Method: "delete_namespace_resource", Params: params}
 	return c.Call(req, nil)
-}
-
-// CreateMissingDefaultPool calls bucket_api.create_missing_default_pool()
-func (c *RPCClient) CreateMissingDefaultPool(params CreateMissingDefaultPoolParams) error {
-    req := &RPCMessage{API: "pool_api", Method: "create_missing_default_pool", Params: params}
-    return c.Call(req, nil)
 }
 
 // CreateTierAPI calls tier_api.create_tier()
