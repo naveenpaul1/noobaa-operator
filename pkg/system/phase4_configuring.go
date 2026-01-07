@@ -1184,7 +1184,8 @@ func (r *Reconciler) prepareAzureBackingStore() error {
 		key := r.getAccountPrimaryKey(azureAccountName, azureGroupName)
 		r.AzureContainerCreds.StringData["AccountKey"] = key
 	}
-
+	// AZURE_GOVERNMENT = 'login.microsoftonline.us'
+	// AZURE_PUBLIC_CLOUD = 'login.microsoftonline.com'
 	azureContainerName := ""
 	if r.AzureContainerCreds.StringData["targetBlobContainer"] == "" {
 		azureContainerName = strings.ToLower(randname.GenerateWithPrefix("noobaacontainer", 5))

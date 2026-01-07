@@ -283,7 +283,7 @@ spec:
 
 `
 
-const Sha256_deploy_crds_noobaa_io_backingstores_yaml = "1b202cb74ba1bd0e54627bb55e14feea349c2f3d1604776ccaa040c37a932bef"
+const Sha256_deploy_crds_noobaa_io_backingstores_yaml = "02b2227acc781220ec7c80f7069695198ae993dc2b6d2e33b25870bc349ba448"
 
 const File_deploy_crds_noobaa_io_backingstores_yaml = `---
 apiVersion: apiextensions.k8s.io/v1
@@ -374,6 +374,9 @@ spec:
               azureBlob:
                 description: AzureBlob specifies a backing store of type azure-blob
                 properties:
+                  clientId:
+                    description: Azure client id
+                    type: string
                   secret:
                     description: |-
                       Secret refers to a secret that provides the credentials
@@ -389,9 +392,15 @@ spec:
                         type: string
                     type: object
                     x-kubernetes-map-type: atomic
+                  subscriptionId:
+                    description: Azure subscription id
+                    type: string
                   targetBlobContainer:
                     description: TargetBlobContainer is the name of the target Azure
                       Blob container
+                    type: string
+                  tenantId:
+                    description: Azure tenant id
                     type: string
                 required:
                 - secret
@@ -911,7 +920,7 @@ spec:
       status: {}
 `
 
-const Sha256_deploy_crds_noobaa_io_namespacestores_yaml = "dc1da64540920101bfb80e331920a3bc2b0b39ea27aacf148109b3fd91ed134e"
+const Sha256_deploy_crds_noobaa_io_namespacestores_yaml = "9de6aff3a26843040d748df9d928782bfbffd26a0f2195188902c0244d28d789"
 
 const File_deploy_crds_noobaa_io_namespacestores_yaml = `---
 apiVersion: apiextensions.k8s.io/v1
@@ -1005,6 +1014,9 @@ spec:
               azureBlob:
                 description: AzureBlob specifies a namespace store of type azure-blob
                 properties:
+                  clientId:
+                    description: Azure client id
+                    type: string
                   secret:
                     description: |-
                       Secret refers to a secret that provides the credentials
@@ -1020,9 +1032,15 @@ spec:
                         type: string
                     type: object
                     x-kubernetes-map-type: atomic
+                  subscriptionId:
+                    description: Azure subscription id
+                    type: string
                   targetBlobContainer:
                     description: TargetBlobContainer is the name of the target Azure
                       Blob container
+                    type: string
+                  tenantId:
+                    description: Azure tenant id
                     type: string
                 required:
                 - secret
@@ -1425,7 +1443,7 @@ spec:
       status: {}
 `
 
-const Sha256_deploy_crds_noobaa_io_noobaas_yaml = "38de565d60a559d52856d009eac5596b13fc2aa42ab12a4663c0a9a6ae2b5a5f"
+const Sha256_deploy_crds_noobaa_io_noobaas_yaml = "4ca58e91d4a7a672a24d93abebade109469b1f72d6e0cf2fc895f4413bc582e4"
 
 const File_deploy_crds_noobaa_io_noobaas_yaml = `---
 apiVersion: apiextensions.k8s.io/v1
@@ -2865,6 +2883,9 @@ spec:
                   azureBlob:
                     description: AzureBlob specifies a backing store of type azure-blob
                     properties:
+                      clientId:
+                        description: Azure client id
+                        type: string
                       secret:
                         description: |-
                           Secret refers to a secret that provides the credentials
@@ -2880,9 +2901,15 @@ spec:
                             type: string
                         type: object
                         x-kubernetes-map-type: atomic
+                      subscriptionId:
+                        description: Azure subscription id
+                        type: string
                       targetBlobContainer:
                         description: TargetBlobContainer is the name of the target
                           Azure Blob container
+                        type: string
+                      tenantId:
+                        description: Azure tenant id
                         type: string
                     required:
                     - secret

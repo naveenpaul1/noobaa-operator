@@ -1025,14 +1025,59 @@ func (r *Reconciler) ReconcileAWSCredentials() error {
 
 // ReconcileAzureCredentials creates a CredentialsRequest resource if cloud credentials operator is available
 func (r *Reconciler) ReconcileAzureCredentials() error {
+	clientID := os.Getenv("CLIENTID")
+	r.Logger.Infof("Getting role ARN: %s = %s", "CLIENTID", clientID)
+	if clientID != "" {
+		r.IsAzureSTSCluster = true
+	}
+
+	tenantId := os.Getenv("TENANTID")
+	subscriptionId := os.Getenv("SUBSCRIPTIONTID")
+
 	r.Logger.Info("Running in Azure. will create a CredentialsRequest resource")
 	err := r.Client.Get(r.Ctx, util.ObjectKey(r.AzureCloudCreds), r.AzureCloudCreds)
-	if err == nil || meta.IsNoMatchError(err) || runtime.IsNotRegisteredError(err) {
+	if err == nil {
+		if r.IsAzureSTSCluster {
+			r.DefaultBackingStore.Spec.AzureBlob = &nbv1.AzureBlobSpec{
+				ClientId:       clientID,
+				TenantId:       tenantId,
+				SubscriptionId: subscriptionId,
+			}
+		}
+	}
+
+	if meta.IsNoMatchError(err) || runtime.IsNotRegisteredError(err) {
 		return nil
 	}
 	if errors.IsNotFound(err) {
 		// credential request does not exist. create one
 		r.Logger.Info("Creating CredentialsRequest resource")
+
+		codec := cloudcredsv1.Codec
+		azureProviderSpec := &cloudcredsv1.AzureProviderSpec{}
+		err = codec.DecodeProviderSpec(r.AzureCloudCreds.Spec.ProviderSpec, azureProviderSpec)
+		if err != nil {
+			r.Logger.Error("error decoding providerSpec from cloud credentials request")
+			return err
+		}
+		// add fields related to STS to creds request (role ARN)
+		if r.IsAzureSTSCluster {
+			azureProviderSpec.AzureClientID = clientID
+			azureProviderSpec.AzureTenantID = tenantId
+			azureProviderSpec.AzureSubscriptionID = subscriptionId
+			azureProviderSpec.AzureRegion = "centralus"
+		}
+		updatedProviderSpec, err := codec.EncodeProviderSpec(azureProviderSpec)
+		if err != nil {
+			r.Logger.Error("error encoding providerSpec for cloud credentials request")
+			return err
+		}
+		r.AzureCloudCreds.Spec.ProviderSpec = updatedProviderSpec
+		// add fields related to STS to creds request (path)
+		if r.IsAzureSTSCluster {
+			r.AzureCloudCreds.Spec.CloudTokenPath = webIdentityTokenPath
+		}
+
 		r.Own(r.AzureCloudCreds)
 		err = r.Client.Create(r.Ctx, r.AzureCloudCreds)
 		if err != nil {
