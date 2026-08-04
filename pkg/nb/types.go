@@ -324,6 +324,12 @@ type ListHostsReply struct {
 // HostInfo is the information of a host(partial)
 type HostInfo struct {
 	Name string `json:"name"`
+	Mode string `json:"mode,omitempty"`
+}
+
+// DeleteHostParams is the params of host_api.delete_host()
+type DeleteHostParams struct {
+	Name string `json:"name"`
 }
 
 // CreateSystemParams is the params of system_api.create_system()

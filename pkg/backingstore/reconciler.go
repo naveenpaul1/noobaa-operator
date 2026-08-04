@@ -593,8 +593,20 @@ func (r *Reconciler) ReadSystemInfo() error {
 				return err
 			}
 
-			if len(hostsInfo.Hosts) > pvPool.NumVolumes { // scaling down - not supported
-				return util.NewPersistentError("InvalidBackingStore",
+			podsList := &corev1.PodList{}
+			pvcsList := &corev1.PersistentVolumeClaimList{}
+			util.KubeList(podsList, client.InNamespace(options.Namespace), client.MatchingLabels{"pool": r.BackingStore.Name})
+			util.KubeList(pvcsList, client.InNamespace(options.Namespace), client.MatchingLabels{"pool": r.BackingStore.Name})
+
+			// Orphaned hosts remain in the NooBaa DB after a PVC/pod is replaced with a new
+			// identity. Clean them up so stale inventory is not mistaken for scale-down.
+			if err := r.cleanupOrphanedPvPoolHosts(hostsInfo.Hosts, podsList.Items, pvcsList.Items); err != nil {
+				return err
+			}
+
+			attachedHosts := countAttachedPvPoolHosts(hostsInfo.Hosts, podsList.Items)
+			if attachedHosts > pvPool.NumVolumes {
+				return util.NewPersistentError("ScaleDownNotSupported",
 					"Scaling down the number of nodes is not currently supported")
 			}
 			if pvPool.NumVolumes != int(pool.Hosts.ConfiguredCount) {
@@ -1299,7 +1311,7 @@ func (r *Reconciler) reconcileMissingPvcs(pvcsList *corev1.PersistentVolumeClaim
 
 func (r *Reconciler) isPodinNoobaa(pod *corev1.Pod) bool {
 	for _, host := range *r.HostsInfo {
-		if strings.HasPrefix(host.Name, pod.Name) {
+		if hostPodName(host.Name) == pod.Name {
 			return true
 		}
 	}
@@ -1438,6 +1450,25 @@ func (r *Reconciler) deletePvPool() error {
 	util.KubeDeleteAllOf(&corev1.Pod{}, client.InNamespace(options.Namespace), client.MatchingLabels{"pool": r.BackingStore.Name})
 	util.KubeDeleteAllOf(&corev1.PersistentVolumeClaim{}, client.InNamespace(options.Namespace), client.MatchingLabels{"pool": r.BackingStore.Name})
 	return nil
+}
+
+// cleanupOrphanedPvPoolHosts asks noobaa-core to delete hosts that no longer have a
+// matching agent pod or PVC. Returns a temporary error when deletions were issued so
+// reconcile requeues while core finishes removing them from inventory.
+func (r *Reconciler) cleanupOrphanedPvPoolHosts(hosts []nb.HostInfo, pods []corev1.Pod, pvcs []corev1.PersistentVolumeClaim) error {
+	orphans := findOrphanedPvPoolHosts(hosts, pods, pvcs, r.BackingStore.Name)
+	if len(orphans) == 0 {
+		return nil
+	}
+
+	for _, host := range orphans {
+		r.Logger.Warnf("Deleting orphaned PV-pool host %q (no matching pod/PVC)", host.Name)
+		if err := r.NBClient.DeleteHostAPI(nb.DeleteHostParams{Name: host.Name}); err != nil {
+			return fmt.Errorf("failed to delete orphaned host %q: %w", host.Name, err)
+		}
+	}
+
+	return fmt.Errorf("deleted %d orphaned PV-pool host(s); waiting for noobaa-core inventory to update", len(orphans))
 }
 
 func (r *Reconciler) reconcileResources(src, dst *corev1.ResourceList, minCPU, minMem resource.Quantity) error {

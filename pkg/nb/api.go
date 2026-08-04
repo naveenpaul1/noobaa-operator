@@ -21,6 +21,7 @@ type Client interface {
 	ListAccountsAPI(ListAccountsParams) (ListAccountsReply, error)
 	ListBucketsAPI(ListBucketsParams) (ListBucketsReply, error)
 	ListHostsAPI(ListHostsParams) (ListHostsReply, error)
+	DeleteHostAPI(DeleteHostParams) error
 
 	CreateSystemAPI(CreateSystemParams) (CreateSystemReply, error)
 	CreateAccountAPI(CreateAccountParams) (CreateAccountReply, error)
@@ -167,6 +168,12 @@ func (c *RPCClient) ListHostsAPI(params ListHostsParams) (ListHostsReply, error)
 	}{}
 	err := c.Call(req, res)
 	return res.Reply, err
+}
+
+// DeleteHostAPI calls host_api.delete_host()
+func (c *RPCClient) DeleteHostAPI(params DeleteHostParams) error {
+	req := &RPCMessage{API: "host_api", Method: "delete_host", Params: params}
+	return c.Call(req, nil)
 }
 
 // CreateSystemAPI calls system_api.create_system()

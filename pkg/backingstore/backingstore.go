@@ -1029,7 +1029,7 @@ func RunRemovePendingPods(cmd *cobra.Command, args []string) {
 
 func isPodinNoobaa(pod *corev1.Pod, hostsInfo *[]nb.HostInfo) bool {
 	for _, host := range *hostsInfo {
-		if strings.HasPrefix(host.Name, pod.Name) {
+		if hostPodName(host.Name) == pod.Name {
 			return true
 		}
 	}
