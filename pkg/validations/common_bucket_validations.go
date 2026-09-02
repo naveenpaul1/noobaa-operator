@@ -39,7 +39,7 @@ func ValidateNSFSAccountConfig(NSFSConfig string, bucketclass string) error {
 	// Check UID/GID cases only in case they're defined
 	if configObj.UID != nil || configObj.GID != nil {
 		// Check whether only UID or only GID were provided
-		if *configObj.UID < 0 || *configObj.GID < 0 {
+		if *configObj.UID <= 0 || *configObj.GID <= 0 {
 			return fmt.Errorf("UID and GID must be positive integers")
 			// Check whether a distinguished name was provided alongside UID or GID
 		} else if configObj.DistinguishedName != "" && (*configObj.GID > -1 || *configObj.UID > -1) {
