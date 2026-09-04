@@ -277,7 +277,7 @@ func UpdateBucketTagging(sysClient *system.Client, obc *nbv1.ObjectBucketClaim) 
 		return fmt.Errorf("OBC is not provided or doesn't contain any label")
 	}
 
-	client := &http.Client{Transport: util.InsecureHTTPTransport}
+	client := &http.Client{Transport: util.GlobalCARefreshingTransport}
 	s3Status := &sysClient.NooBaa.Status.Services.ServiceS3
 	s3Config := &aws.Config{
 		Credentials: credentials.NewStaticCredentials(

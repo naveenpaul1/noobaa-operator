@@ -2934,3 +2934,9 @@ func secretDataString(secret *corev1.Secret, key string) string {
 	}
 	return ""
 }
+
+// Find OpenShift serving certs exits of deplyment or not, Same kind of check we do on r.ApplyCAsToPods
+func HasServiceServingCA() bool {
+	_, err := os.Stat(ServiceServingCertCAFile)
+	return err == nil
+}

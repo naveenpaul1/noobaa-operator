@@ -457,9 +457,9 @@ func (r *Reconciler) SetDesiredDeploymentEndpoint() error {
 						c.Env[j].Value = ""
 					}
 				case "NOTIFICATION_LOG_DIR":
-					notification_log_dir_value := "";
-					if (r.NooBaa.Spec.BucketNotifications.Enabled) {
-						notification_log_dir_value = "/var/logs/notifications";
+					notification_log_dir_value := ""
+					if r.NooBaa.Spec.BucketNotifications.Enabled {
+						notification_log_dir_value = "/var/logs/notifications"
 					}
 					c.Env[j].Value = notification_log_dir_value
 				}
@@ -1541,11 +1541,11 @@ func (r *Reconciler) prepareCephBackingStore() error {
 	region := "us-east-1"
 	forcePathStyle := true
 	client := &http.Client{
-		Transport: util.InsecureHTTPTransport,
+		Transport: util.GlobalCARefreshingTransport,
 		Timeout:   10 * time.Second,
 	}
-	if r.ApplyCAsToPods != "" {
-		client.Transport = util.GlobalCARefreshingTransport
+	if r.ApplyCAsToPods == "" {
+		client.Transport = util.InsecureHTTPTransport
 	}
 
 	s3Config := &aws.Config{

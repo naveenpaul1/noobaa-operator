@@ -41,8 +41,7 @@ func (c *RPCConnHTTP) Call(req *RPCMessage, res RPCResponse) error {
 
 	httpRequest, err := http.NewRequest("PUT", c.Address, bytes.NewReader(reqBytes))
 	util.Panic(err)
-
-	httpResponse, err := c.RPC.HTTPClient.Do(httpRequest)
+	httpResponse, err := c.RPC.httpClientFor(c.Address).Do(httpRequest)
 	defer func() {
 		if httpResponse != nil && httpResponse.Body != nil {
 			util.SafeClose(httpResponse.Body, "Failed to close HTTP response body")

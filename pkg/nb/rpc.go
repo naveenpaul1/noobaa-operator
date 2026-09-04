@@ -1,7 +1,9 @@
 package nb
 
 import (
+	"net"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -129,7 +131,7 @@ var _ error = &RPCError{}
 func NewRPC() *RPC {
 	return &RPC{
 		HTTPClient: http.Client{
-			Transport: util.InsecureHTTPTransport,
+			Transport: rpcTransport(""),
 		},
 		ConnMap:     make(map[string]RPCConn),
 		ConnMapLock: sync.Mutex{},
@@ -197,6 +199,26 @@ func (r *RPC) GetConnection(address string) RPCConn {
 		conn = NewRPCConnHTTP(r, address)
 	}
 	return conn
+}
+
+func rpcTransport(address string) http.RoundTripper {
+	u, err := url.Parse(address)
+	if err != nil {
+		return util.InsecureHTTPTransport
+	}
+	host := u.Hostname()
+	if host == "localhost" || host == "127.0.0.1" || net.ParseIP(host) != nil {
+		return util.InsecureHTTPTransport
+	}
+	// In-cluster service DNS: minikube has no service CA and core
+	// serves selfsigned.noobaa.io. OpenShift has service-ca.crt.
+	if !util.HasServiceServingCA() {
+		return util.InsecureHTTPTransport
+	}
+	return util.GlobalCARefreshingTransport
+}
+func (r *RPC) httpClientFor(address string) *http.Client {
+	return &http.Client{Transport: rpcTransport(address)}
 }
 
 // RemoveConnection removes the connection from the RPC connections map and start reconnecting
